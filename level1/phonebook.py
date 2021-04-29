@@ -1,14 +1,19 @@
 def solution(phone_book):
-    answer = True
-    phone_book.sort(key=len)
+    phone_book.sort()
     length = len(phone_book)
-    for i in range(length):
-        pivot = phone_book[i]
-        for j in range(i+1, length):
-            comp = phone_book[j]
-            if len(pivot) < len(comp) and pivot == comp[0:len(pivot)]:
-                return False
+    for i in range(length-1):
+        if phone_book[i+1].startswith(phone_book[i]):
+            return False
+    return True
 
-    return answer
+'''
+def solution(phone_book):
+    phone_book.sort()
+    length = len(phone_book)
+    for p1, p2 in zip(phone_book, phone_book[1:]):
+        if p2.startswith(p1):
+            return False
+    return True
+'''
 
 solution(["119", "97674223", "1195524421"])
