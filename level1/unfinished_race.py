@@ -1,10 +1,19 @@
 def solution(participant, completion):
-    answer = ''
-    for com in completion:
-        participant.remove(com)
+    participant.sort()
+    completion.sort()
 
-    answer = participant[0]
+    for part, com in zip(participant, completion):
+        if part != com:
+            return part
 
-    return answer
+    return participant[-1]
 
-solution(["mislav", "stanko", "mislav", "ana"], ["stanko", "ana", "mislav"])
+'''
+from collections import Counter
+
+def solution2(participant, completion):
+    answer = Counter(participant) - Counter(completion)
+    return list(answer.keys())[0]
+'''
+
+print(solution(["mislav", "stanko", "mislav", "ana"], ["stanko", "ana", "mislav"]))
