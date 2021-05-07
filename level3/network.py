@@ -17,17 +17,12 @@ def bfs(graph, visited, start):
 def solution(n, computers):
     answer = 0
     visited = [0] * n
-    while True:
-        start = -1
-        for idx, v in enumerate(visited):
-            if v == 0:
-                start = idx
-                break
-        if start == -1:
-            break
-        else:
+    start = 0
+    while 0 in visited:
+        if visited[start] == 0:
             bfs(computers, visited, start)
             answer += 1
+        start += 1
 
     return answer
 
