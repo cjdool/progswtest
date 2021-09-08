@@ -1,71 +1,40 @@
-import heapq
-import sys
+from collections import deque
 
-inf = sys.maxsize
+def solution(arr, k):
+    answer = 1000
+    n = len(arr)
+    ansstatestr = ''.join(map(str, list(range(1,n+1))))
+    queue = deque()
+    startstatestr = ''.join(map(str, arr))
+    queue.append((startstatestr , 0))
+    visited = {startstatestr : 1}
 
-
-def dijkstra(graph, K):
-    dist = [inf] * len(graph)
-    dist[K] = 0
-    queue = []
-    heapq.heappush(queue, [0, K])
     while queue:
-        current_dist, here = heapq.heappop(queue)
-        for there, weight in graph[here].items():
-            next_dist = dist[here] + weight
-            if next_dist < dist[there]:
-                dist[there] = next_dist
-                heapq.heappush(queue, [next_dist, there])
+        curstatestr, cnt = queue.popleft()
 
-    return dist
+        if curstatestr == ansstatestr:
+            answer = min(answer, cnt)
+            continue
 
-'''
-def dfs(graph, root, end, traps):
-    res = []
-    visited = []
-    stack = [(root, 0)]
+        curstate = list(curstatestr)
 
-    while stack:
-        n, curweight = stack.pop()
-        if n == end:
-            res.append(curweight)
-        if n not in visited or n in traps:
-            if n in traps:
+        maxval = '1'
+        for x in range(n, 0, -1):
+            if curstate[x-1] != str(x):
+                maxval = str(x)
+                break
+        maxidx = curstate.index(maxval)
 
-            else:
-                visited.append(n)
-                for nxt, weight in graph[n].items():
-                    stack.append((nxt, curweight+weight))
-
-    return min(res)
-'''
-
-
-def solution(n, start, end, roads, traps):
-    graph = [{} for _ in range(n)]
-    graph2 = [{} for _ in range(n)]
-    for p, q, s in roads:
-        if q-1 in graph[p-1].keys():
-            graph[p-1][q-1] = min(s, graph[p-1][q-1])
-            graph2[p-1][q-1] = min(s, graph2[p-1][q-1])
-        else:
-            graph[p-1][q-1] = s
-            graph2[p-1][q-1] = s
-        if p-1 in graph2[q-1].keys():
-            graph2[q-1][p-1] = min(s, graph2[q-1][p-1])
-        else:
-            graph2[q-1][p-1] = s
-
-    dist = dijkstra(graph, start-1)
-    dist2 = dijkstra(graph2, start-1)
-
-    answer = 0
-    if dist[end-1] != inf:
-        answer += dist[end-1]
-    if dist2[end-1] != inf:
-        answer += dist2[end-1]
+        for kv in range(1, k+1):
+            if maxidx + kv < n:
+                curstate[maxidx], curstate[maxidx + kv] = curstate[maxidx + kv], curstate[maxidx]
+                nxtstatestr = ''.join(curstate)
+                if nxtstatestr not in visited:
+                    queue.append((nxtstatestr, cnt+1))
+                    visited[nxtstatestr] = 1
+                curstate[maxidx + kv], curstate[maxidx] = curstate[maxidx], curstate[maxidx + kv]
 
     return answer
 
-print(solution(3,1,3,[[1, 2, 2], [3, 2, 3]], [2]))
-print(solution(4,1,4,[[1, 2, 1], [3, 2, 1], [2, 4, 1]], [2,3]))
+
+print(solution([4,5,2,3,1], 2))
